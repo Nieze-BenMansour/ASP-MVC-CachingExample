@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CachingExample.Models.Product>
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link type="text/css" rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+    <h1>Choose a Product from the Products List</h1>
+    <div class="product-wrapper">
+        <div class="product-list">
+            @foreach (var product in Model)
+        {
+            <div>
+                    <a asp-action="Index" asp-route-id="@product.Id">@product.Name</a>
+                </div>
+        }
+        </div>
+    </div>
+
+    <cache>@DateTime.Now</cache> @* => Dure 20 mn *@
+    <cache vary-by="@ViewBag.SelectedProductId">
+        <div>@DateTime.Now</div>
+        <div>
+            @await Component.InvokeAsync("Product", @ViewBag.SelectedProductId)
+        </div>
+    </cache>
+    <cache expires-on="@new DateTime(2025,1,29,17,02,0)">
+        Current Time Inside Cache Tag Helper: @DateTime.Now
+    </cache>
+    <cache expires-after="@TimeSpan.FromSeconds(120)">
+        Current Time Inside Cache Tag Helper: @DateTime.Now
+    </cache>
+    <cache expires-sliding="@TimeSpan.FromSeconds(60)">
+        Current Time Inside Cache Tag Helper: @DateTime.Now
+    </cache>
+    <cache vary-by-user="true">
+        Current Time Inside Cache Tag Helper: @DateTime.Now
+    </cache>
+</body>
+</html>
